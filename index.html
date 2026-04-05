@@ -816,7 +816,7 @@ async function handlePhoto(event) {
     box.innerHTML = `<div class="ai-box"><div class="ai-tag">AI analyserer <span class="spinner"></span></div><div class="loading-txt">Genkender fiskeart og estimerer længde...</div></div>`;
     try {
       // Compress image before sending to API
-      const base64 = await compressImage(dataUrl, 1600, 0.82);
+      const base64 = await compressImage(dataUrl, 800, 0.65);
       const mediaType = 'image/jpeg';
       const resp = await fetch('https://api.anthropic.com/v1/messages', {
         method: 'POST',
