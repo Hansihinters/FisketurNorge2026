@@ -208,6 +208,9 @@ html, body { height: 100%; background: var(--cream); font-family: 'DM Sans', san
     <h2>Firebase opsætning</h2>
     <p>Indsæt din Firebase databaseURL herunder. Se vejledningen nedenfor for at finde den.</p>
     <input class="setup-input" id="fb-url" placeholder="https://DIT-PROJEKT.firebaseio.com" type="url">
+    <h2 style="margin-top:1rem;">Anthropic API-nøgle</h2>
+    <p>Bruges til AI-genkendelse af fisk. Hent din nøgle på <strong>console.anthropic.com</strong> → API Keys.</p>
+    <input class="setup-input" id="api-key" placeholder="sk-ant-api03-..." type="password">
     <button class="setup-btn" onclick="connect()">Forbind og start appen</button>
     <div class="setup-error" id="fb-error">Kunne ikke forbinde – tjek URL og prøv igen.</div>
 
@@ -464,6 +467,8 @@ async function connect() {
   }
   document.getElementById('fb-error').style.display = 'none';
   localStorage.setItem('fb_url', url);
+  const apiKey = document.getElementById('api-key').value.trim();
+  if (apiKey) localStorage.setItem('anthropic_key', apiKey);
   initFirebase(url);
 }
 
@@ -506,6 +511,8 @@ function initFirebase(url) {
 // Auto-connect if saved
 window.addEventListener('load', () => {
   const saved = localStorage.getItem('fb_url');
+  const savedKey = localStorage.getItem('anthropic_key');
+  if (savedKey) document.getElementById('api-key').value = savedKey;
   if (saved) {
     document.getElementById('fb-url').value = saved;
     initFirebase(saved);
@@ -832,7 +839,7 @@ async function handlePhoto(event) {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': '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',
+          'x-api-key': localStorage.getItem('anthropic_key') || '',
           'anthropic-version': '2023-06-01',
           'anthropic-dangerous-direct-browser-access': 'true'
         },
