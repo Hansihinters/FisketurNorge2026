@@ -353,6 +353,15 @@ html, body { height: 100%; background: var(--cream); font-family: 'DM Sans', san
       </div>
     </div>
     <button class="reset-btn" onclick="resetCatches()">Nulstil alle fangster</button>
+    <div style="margin-top:1rem;" class="card">
+      <h3 style="font-family:'Fraunces',serif;font-size:18px;color:var(--green-dark);margin-bottom:0.5rem;">AI API-nøgle</h3>
+      <p style="font-size:13px;color:var(--muted);margin-bottom:0.75rem;">Hent nøgle på <strong>console.anthropic.com</strong> → API Keys</p>
+      <div class="add-row">
+        <input class="form-input" type="password" id="settings-api-key" placeholder="sk-ant-api03-...">
+        <button class="add-btn" onclick="saveApiKey()">Gem</button>
+      </div>
+      <div id="api-key-status" style="font-size:12px;color:var(--green-mid);margin-top:6px;display:none;">✓ Nøgle gemt</div>
+    </div>
   </div>
 
   <div class="tab-bar">
@@ -456,6 +465,14 @@ function showToast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 2200);
+}
+
+function saveApiKey() {
+  const key = document.getElementById('settings-api-key').value.trim();
+  if (!key) return;
+  localStorage.setItem('anthropic_key', key);
+  document.getElementById('api-key-status').style.display = 'block';
+  setTimeout(() => document.getElementById('api-key-status').style.display = 'none', 2000);
 }
 
 // Firebase
@@ -835,13 +852,10 @@ async function handlePhoto(event) {
       // Compress image before sending to API
       const base64 = await compressImage(dataUrl, 800, 0.65);
       const mediaType = 'image/jpeg';
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      const resp = await fetch('https://fisketur2026.tubepremium1337.workers.dev', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-api-key': localStorage.getItem('anthropic_key') || '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',
-          'anthropic-version': '2023-06-01',
-          'anthropic-dangerous-direct-browser-access': 'true'
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-20250514',
