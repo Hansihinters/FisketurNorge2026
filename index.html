@@ -526,12 +526,14 @@ function initFirebase(url) {
 }
 
 // Auto-connect if saved
+const FIREBASE_URL = 'https://fisketur-norge-2026-default-rtdb.europe-west1.firebasedatabase.app';
 window.addEventListener('load', () => {
-  const saved = localStorage.getItem('fb_url');
+  const saved = localStorage.getItem('fb_url') || FIREBASE_URL;
   const savedKey = localStorage.getItem('anthropic_key');
   if (savedKey) document.getElementById('api-key').value = savedKey;
   if (saved) {
     document.getElementById('fb-url').value = saved;
+    localStorage.setItem('fb_url', saved);
     initFirebase(saved);
   }
 });
