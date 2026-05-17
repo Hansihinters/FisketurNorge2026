@@ -1100,17 +1100,19 @@ async function handlePhoto(event) {
   const reader = new FileReader();
   reader.onload = async (e) => {
     const dataUrl = e.target.result;
-    lastImg = dataUrl;
+    // Compress immediately — this is what gets stored in Firebase
+    const compressed = await compressImageFull(dataUrl, 800, 0.65);
+    lastImg = compressed;
     const preview = document.getElementById('photo-preview');
-    preview.src = dataUrl;
+    preview.src = compressed;
     preview.style.display = 'block';
     document.getElementById('photo-placeholder').style.display = 'none';
     const box = document.getElementById('ai-box');
     box.style.display = 'block';
     box.innerHTML = `<div class="ai-box"><div class="ai-tag">AI analyserer <span class="spinner"></span></div><div class="loading-txt">Genkender fiskeart og estimerer længde...</div></div>`;
     try {
-      // Compress image before sending to API
-      const base64 = await compressImage(dataUrl, 800, 0.65);
+      // Re-use already compressed image for API call (strip data URL prefix)
+      const base64 = compressed.split(',')[1];
       const mediaType = 'image/jpeg';
       const resp = await fetch('https://fisketur2026.tubepremium1337.workers.dev', {
         method: 'POST',
