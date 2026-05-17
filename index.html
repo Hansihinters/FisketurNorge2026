@@ -1048,7 +1048,10 @@ async function saveCatch() {
   document.getElementById('ai-box').style.display = 'none';
   document.getElementById('photo-preview').style.display = 'none';
   document.getElementById('photo-placeholder').style.display = 'block';
-  document.getElementById('img-input').value = '';
+  const camInput = document.getElementById('img-input-camera');
+  const upInput = document.getElementById('img-input-upload');
+  if (camInput) camInput.value = '';
+  if (upInput) upInput.value = '';
   renderFishGrid();
   btn.disabled = false;
   showToast('Fangst gemt! 🎣');
