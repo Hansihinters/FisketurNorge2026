@@ -649,6 +649,12 @@ function compressImageFull(dataUrl, maxSize, quality) {
 
 let albumState = [];
 
+async function deleteAlbumPhoto(id) {
+  if (!confirm('Slet dette billede?')) return;
+  await db.ref('album/' + id).remove();
+  showToast('Billede slettet');
+}
+
 function renderAlbum() {
   const grid = document.getElementById('album-grid');
   const empty = document.getElementById('album-empty');
@@ -659,9 +665,26 @@ function renderAlbum() {
   }
   empty.style.display = 'none';
   grid.innerHTML = albumState.map(p => `
-    <div class="album-thumb" onclick="openAlbumLightbox('${p.id}')">
+    <div class="album-thumb" id="athumb-${p.id}"
+      onclick="openAlbumLightbox('${p.id}')"
+      oncontextmenu="event.preventDefault();deleteAlbumPhoto('${p.id}')">
       <img src="${p.img}" loading="lazy" alt="Albumfoto">
     </div>`).join('');
+
+  // Long-press for touch devices
+  albumState.forEach(p => {
+    const el = document.getElementById('athumb-' + p.id);
+    if (!el) return;
+    let timer;
+    el.addEventListener('touchstart', () => {
+      timer = setTimeout(() => {
+        el.style.outline = '3px solid var(--amber)';
+        deleteAlbumPhoto(p.id).finally(() => { if (el) el.style.outline = ''; });
+      }, 600);
+    }, { passive: true });
+    el.addEventListener('touchend', () => clearTimeout(timer), { passive: true });
+    el.addEventListener('touchmove', () => clearTimeout(timer), { passive: true });
+  });
 }
 
 let lightboxIndex = -1; // -1 = catch photo, >=0 = album index
