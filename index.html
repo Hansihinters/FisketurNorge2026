@@ -830,20 +830,7 @@ function initFirebase(url) {
       }
     }
 
-    // Safety timeout — show app after 8s even if something is slow
-    setTimeout(() => {
-      if (!appShown) {
-        appShown = true;
-        document.getElementById('app').style.display = 'flex';
-        hideLoadingScreen();
-        const trip = TRIPS[currentTripId];
-        if (trip) document.getElementById('header-logo').textContent = trip.flag + ' ' + trip.name;
-        document.getElementById('header-date').textContent = new Date().toLocaleDateString('da-DK', {weekday:'long',day:'numeric',month:'long'});
-        document.getElementById('share-link').textContent = window.location.href;
-        renderPtsList();
-        render();
-      }
-    }, 8000);
+
 
     // Connection status
     db.ref('.info/connected').on('value', snap => {
